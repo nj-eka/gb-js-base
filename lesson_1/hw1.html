@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>  
+    <script src="common.js"></script>    
+    <script src="async_script.js" async></script>
+    <script src="defer_script.js" defer></script>  
+    <script>
+        var uname = prompt("Your name: ")
+        var admin = uname
+        var tC = parseFloat(prompt(`${admin} pls enter any value of t\u2103: `))
+        document.writeln(`<p>${tC} t\u2103 \u2248 ${((9 / 5) * tC + 32).toFixed(2)} t\u2109</p>`)
+        document.writeln(`<p>typeof(1000 + '108') is ${typeof(1000 + '108')} and value = ${1000 + '108'}</p>`)
+    </script>
+</body>
+</html>
