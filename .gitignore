@@ -6,3 +6,10 @@ lesson_3/.vscode/
 lesson_3/package-lock.json
 
 lesson_3/package.json
+package-lock.json
+node_modules/os/.npmignore
+node_modules/os/LICENSE
+node_modules/os/index.js
+node_modules/os/package.json
+node_modules/os/README.md
+.gitignore

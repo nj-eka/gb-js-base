@@ -31,8 +31,9 @@ do{
         attempts.push([guess, score]);
         console.log(score);
     } while(attempts.length < max_attemps && score.b < secret.length)
-    rounds.push([secret, attempts, score.b == secret.length])
-    console.log(score.b == secret.length ? 'Победа!' : "Закончились попытки.")
+    rounds.push([secret, attempts, score.b == secret.length];)
+    console.log(`Было загаданно слово: ${secret}`);
+    console.log(score.b == secret.length ? 'Победа!' : "Закончились попытки.");
 } while (request(`Нажмите 1, чтобы продолжить, иначе выход.`) == "1")
 console.log(JSON.stringify(rounds));
 

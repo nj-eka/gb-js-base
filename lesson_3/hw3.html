@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>GB-JS-BASE HW3 3-5</title>
+</head>
+<body>
+    <script>
+    /* 1. С помощью цикла while вывести все простые числа в промежутке от 0 до 100. */
+    let n = parseInt(prompt(
+      'Введите любое целое положительное число (в пределах разумного), для которого будут найдены все простые числа меньше его (например: 100)',
+      100));
+    console.log(`Список простых чисел до ${n} включительно:\n${getAllPrimesUp2(n).join(", ")}`)
+
+    function getAllPrimesUp2(n){
+        let sieve = new Array(n+1).fill(true), primes = [];
+        for (let x=2; x*x <= n; ++x) //для этой задачи лучше подходит цикл for
+            if (sieve[x])
+                    for (let y = x*x; y <= n; y += x) sieve[y] = false;
+        sieve.forEach((elm, key) => { if (key > 1 && elm) primes.push(key) })
+        return primes; //возврат в виде массива. в виде строки ниже.
+        //return sieve.reduce((acc, elm, key) => { return (key > 1 && elm) ? acc + (key > 2 ? ', ' : '') + key : acc }, '');
+    }
+
+    /*2. С этого урока начинаем работать с функционалом интернет-магазина. 
+    Предположим, есть сущность корзины. 
+    Нужно реализовать функционал подсчета стоимости корзины в зависимости от находящихся в ней товаров.
+
+    3. Товары в корзине хранятся в массиве. 
+    Задачи:
+    a) Организовать такой массив для хранения товаров в корзине;
+    b) Организовать функцию countBasketPrice, которая будет считать стоимость корзины.
+    */
+    const items = [['1001', 'Яблоко', 95, 'кг.'], ['956', 'Тыква', 88, 'шт' ], ['745', 'Морковь', 25, 'упаковка']] 
+    items.field = {id:0, name:1, price:2, unit:3}
+    items.findItem = (item_id) => { 
+        return items.find(item => item[items.field.id] == item_id) }
+    items.getItemPrice = (item_id) => { 
+        return items.findItem(item_id)[items.field.price] }
+
+    const basket = [['1001', 2], ['956', 3], ['745', 1]]
+    basket.field = {id:0, amount:1}
+    basket.countBasketPrice = (items)=>{
+        return basket.reduce((sum, item_box) => {
+            return sum += items.getItemPrice(item_box[basket.field.id]) * item_box[basket.field.amount]}, 0)
+    }
+
+    console.log('Ассортимент:\n' + items.join("\n"));
+    console.log('\nКорзинка:\n' + basket.join("\n"));
+    console.log('\nИтого: ' + basket.countBasketPrice(items));
+    
+    /*4.*Вывести с помощью цикла for числа от 0 до 9, не используя тело цикла. 
+    Выглядеть это должно так: for(…){// здесь пусто}
+    */
+    for (let i = 0; i < 10; console.log(i++)) {}
+
+    /*5. *Нарисовать пирамиду с помощью console.log, 
+    как показано на рисунке, только у вашей пирамиды должно быть 20 рядов, а не 5:
+    x
+    xx
+    xxx
+    xxxx
+    xxxxx
+    */
+
+    const plotPyramid = (num_rows, symbol) => {
+      let line = '';
+      for (let i = 1; i <= num_rows; i++)
+        console.log(line += symbol);
+    };
+
+    plotPyramid(20, 'x');        
+    </script>
+</body>
+</html>

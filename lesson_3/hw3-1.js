@@ -8,10 +8,7 @@ function getPrimesUp2(n){
     for (let x=2; x*x <= n; ++x)
         if (sieve[x])
             for (let y = x*x; y <= n; y += x) sieve[y] = false;
-
     let primes = [];
-    for(let i=2; i<=n; ++i)
-        if (sieve[i])
-            primes.push(i)
+    sieve.forEach((elm, key) => { if (key > 1 && elm) primes.push(key) })
     return primes;
 }
