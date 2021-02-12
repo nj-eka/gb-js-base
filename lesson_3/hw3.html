@@ -48,7 +48,7 @@
     console.log('Ассортимент:\n' + items.join("\n"));
     console.log('\nКорзинка:\n' + basket.join("\n"));
     console.log('\nИтого: ' + basket.countBasketPrice(items));
-    
+
     /*4.*Вывести с помощью цикла for числа от 0 до 9, не используя тело цикла. 
     Выглядеть это должно так: for(…){// здесь пусто}
     */
@@ -63,11 +63,10 @@
     xxxxx
     */
 
-    const plotPyramid = (num_rows, symbol) => {
+    function plotPyramid (num_rows, symbol) {
       let line = '';
-      for (let i = 1; i <= num_rows; i++)
-        console.log(line += symbol);
-    };
+      for (let i = 1; i <= num_rows; console.log(symbol.repeat(i++))) {}
+    }
 
     plotPyramid(20, 'x');        
     </script>
