@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        td[data-id]:hover {
+            background-color: chartreuse !important;
+        }
+    </style>
+</head>
+<body>
+    <script>
+document.onclick = event => {
+    if (event.target.dataset.id){
+	    console.log("on click: ", event.target.dataset.id);
+        event.target.textContent = event.target.dataset.id;
+        event.target.style.color = "white";
+    }
+};
+
+let fig = "";
+
+document.onmousedown = event =>{
+    if (event.target.dataset.id){
+        fig = event.target.textContent;
+        console.log("on mouse down: ", event.target.dataset.id);       
+    }
+}
+
+document.onmouseup = event =>{
+    if (event.target.dataset.id){
+        event.target.textContent = fig;
+        console.log("on mouse up: ", event.target.dataset.id);       
+    }
+}
+
+function range(size, startAt = 0){
+    return [...Array(size).keys()].map(i => i + startAt);
+};
+
+function characterRange(size, startChar){
+    return String.fromCharCode(...range(size, startChar.charCodeAt(0)));
+};
+
+function characterRange2(startChar, endChar){
+    return characterRange(endChar.charCodeAt(0) - startChar.charCodeAt(0), startChar);
+};
+
+function table(rows,cols, c1, c2, z){
+    let chess_cols = characterRange(cols, 'a'); 
+    var table = document.createElement('table');
+    document.body.appendChild(table);
+    var tr = document.createElement('tr');
+    var td = document.createElement('td');
+    td.style.width = z+'px';
+    td.style.height = z+'px';
+    td.style.textAlign = "center";
+    for(var i=0; i<=rows; i++){
+        table.appendChild(tr.cloneNode(true));
+        for(var j=0; j<=cols; j++){
+            let cell_id = `${j < cols ? chess_cols[j] : ""}${i < rows ? rows - i : ""}`
+            var _tr = table.getElementsByTagName('tr')[i];
+            _tr.appendChild(td.cloneNode(true));
+            var _td = table.getElementsByTagName('tr')[i].getElementsByTagName('td')[j];
+            if (i < rows){
+            if (cols == j){
+                _td.textContent = cell_id;
+            } else {
+                if((i%2==0 && j%2==0) || i%2==1 && j%2==1)
+                    _td.style.backgroundColor = c2;
+                else
+                    _td.style.backgroundColor = c1;
+                _td.setAttribute("data-id", `${cell_id}`);
+            }
+            } else {
+                if (j < cols )
+                _td.textContent = cell_id;         
+            }
+        }
+    }
+}
+table(16,16,'red','black', 40);     
+
+let cell = document.querySelector(`td[data-id=a4]`);
+if (cell)
+    cell.textContent = "П";
+
+    </script>
+</body>
+</html>
