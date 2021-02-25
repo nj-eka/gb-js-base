@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>GB-JS-BASE HW4</title>
+</head>
+<body>
+    <script defer>
+
+function log(...texts, to_page = false){
+    if (!to_page) {console.log(...texts); return;}
+
+    if (typeof log.counter == 'undefined') log.counter = 0;
+    let _p = document.createElement('p')
+    _p.innerHTML = 
+        `<b>${log.counter++} [${performance.now().toFixed(0)}]:</b><br>
+        <i>${texts.map(elm=>typeof elm == 'object'? JSON.stringify(elm) : String(elm))
+            .join("<br>")
+            .replace(/\"/g,"")
+            .replace(/\\n/g,"<br>")
+            }
+        </i>`;
+    let _log = typeof (log_pos) == 'undefined' ? document.body : log_pos;
+    _log.appendChild(_p)
+};
+
+function sleepFor( sleepDuration ){
+    var now = new Date().getTime();
+    while(new Date().getTime() < now + sleepDuration){ /* do nothing */ } 
+};
+
+const produceAfterDelay = (result, delay) => {
+    return new Promise((resolve, reject) => {
+        const callback = () => resolve(result)
+        setTimeout(callback, delay)
+    })
+};
+
+
+
+let storage = localStorage;
+    </script>
+
+    <script>
+log( 
+"1. Написать функцию, преобразующую число в объект.",
+"Передавая на вход число от 0 до 999, надо получить на выходе объект, в котором в соответствующих свойствах описаны единицы, десятки и сотни.", 
+"Например, для числа 245 надо получить следующий объект: {‘единицы’: 5, ‘десятки’: 4, ‘сотни’: 2}.",
+"Если число превышает 999, необходимо выдать соответствующее сообщение с помощью console.log и вернуть пустой объект.")
+
+Number.prototype.inRange = function (min, max, min_inclusive = true, max_inclusive = true) {
+    [min, max, min_inclusive, max_inclusive] = min < max ? [min, max, min_inclusive, max_inclusive] : [max, min, max_inclusive, min_inclusive];
+    return (this > min || (min_inclusive && this == min) ) && (this < max || (max_inclusive && this == max) );
+};
+
+const min = 0, max = 999, example = 245;
+
+function numberParts (n) {
+    var parts = ['единицы', 'десятки', 'сотни'];
+    let num = parseInt(n);
+    return isNaN(num) ? {error: `${n} - не число.`, value: NaN} : 
+                !num.inRange(min, max) ? {error: `${n} - число не в диапазоне [${min}, ${max}]`, value: undefined} : 
+                    {value: String(n).split('').reverse().reduce((obj, v, i) => i < parts.length ? Object.assign(obj, { [parts[i]]: v }) : obj, {})}
+};
+result = numberParts(prompt(`Введите число от ${min} до ${max}: `, example))
+if (result.error) log(`Ошибка: ${result.error}`); 
+log('numberParts return: ', result.value)
+    </script>
+
+    <script>
+log(
+`2. Продолжить работу с интернет-магазином:
+В прошлом домашнем задании вы реализовали корзину на базе массивов. 
+Какими объектами можно заменить их элементы?
+Реализуйте такие объекты.
+Перенести функционал подсчета корзины на объектно-ориентированную базу.`)
+    </script>
+    <!--script async>
+function initStorage(){
+
+}
+    </script-->
+    <script>
+const Lang = (function(){
+    var obj = {};
+    obj.RU = 0;
+    obj.EN = 1;
+    obj.FR = 2;
+    obj.default = obj.RU;
+    obj.ALL = [obj.RU, obj.EN, obj.FR];
+    return obj; })();
+
+const Currency = (function(){
+    var obj = {};
+    obj.RUB = '₽';
+    obj.USD = '$';
+    obj.EUR = '€';
+    obj.default = obj.RUB;
+    return obj; })();
+
+function getExchangeRate(curr = Currency.default){
+    if ( typeof getExchangeRate._exchange == 'undefined' ){
+        getExchangeRate._exchange = new Map([['₽', 1], ['$', 70], ['€', 77]]); //_exchange is static variable here
+        console.log('Обменный курс: ', getExchangeRate._exchange)
+    }
+    return getExchangeRate._exchange.get(curr);
+};
+
+const getItems = (lang = Lang.default, curr = Currency.default) => {
+    const _units = new Map([[1, ['кг', 'kg', 'kg']], 
+                            [2, ['шт', 'pcs', 'pcs']], 
+                            [3, ['уп', 'pkg', 'pkg']], 
+                            [4, ['л', 'L', 'L']]]);
+    _units.getValue = key => _units.get(key)[lang];
+
+    const _items = [['1001', ['Яблоко', 'Apple', 'La Pomme'], 95, 1], 
+                    ['956', ['Тыква', 'Pumpkin', 'La Courge'], 88, 2 ], 
+                    ['745', ['Морковь', 'Carrot', 'La Carotte'], 25, 3]]
+    _items.fields = [{name:'id', type:'string'}, 
+                    {name:'name', type:'lang'},
+                    {name:'price', type:'curr', curr:Currency.default},
+                    {name:'unit', type:'ref', ref:_units.getValue}]
+
+    return Object.freeze(_items.reduce((arr, elm)=> {
+                                arr.push(elm.map((value, index)=>{
+                                    let field = _items.fields[index];
+                                    switch (field.type) {
+                                        case 'lang':
+                                            return value[lang];
+                                        case 'curr':
+                                            return (field.curr == curr ? value : (value / getExchangeRate(curr))).toFixed(2);
+                                        case 'ref':
+                                            return field.ref(value);
+                                        default:
+                                            return value;
+                                    }                                            
+                                }
+                            )); return arr;}, [])
+                        )
+}
+
+function cachingStringifyDecorator(func) {
+    let storage = window.sessionStorage; //todo: sessionStorage can be unavailable...
+    return function() {
+        let key = `${func.name}#${[].join.call(arguments)}`;
+        let svalue = storage.getItem(key);
+        if (svalue) {
+            console.log(`from cache ${key}`)
+            return JSON.parse(svalue);
+        } 
+        let result = func.call(this, ...arguments);  
+        storage.setItem(key, JSON.stringify(result));
+        return result;
+    };
+}
+
+const getCachedStringifyItems = cachingStringifyDecorator(getItems);
+
+
+function findItem (items, item_id){ 
+    return items.find(item => item[0] == item_id) 
+}
+
+function getItemPrice (items, item_id) { 
+        return findItem(items, item_id)[2] 
+}
+
+
+// Basket 
+const basket = [['1001', 2], ['956', 3, 10], ['745', 1, -5]] // basket.field = {id:0, amount:1, discount: 2} percentage discount [-100, 100] (negative means extra charge)
+basket.countBasketPrice = (items)=>{
+    return basket.reduce((sum, item_box) => {
+        let box_cost = getItemPrice(items, item_box[0]) * item_box[1];
+        let discount = item_box[2]; 
+        if (discount) box_cost -= box_cost * ( discount / 100);
+        return sum += +box_cost.toFixed(2) }
+        , 0)
+}
+
+console.log('\nКорзинка:\n' + basket.join("\n"));
+console.log('Ассортимент:\n' + getCachedStringifyItems(Lang.RU, Currency.RUB).join("\n"));
+console.log('\nИтого: ' + basket.countBasketPrice(getCachedStringifyItems(Lang.RU, Currency.RUB)) + Currency.RUB);
+console.log('Ассортимент:\n' + getCachedStringifyItems(Lang.EN, Currency.USD).join("\n"));
+console.log('\nИтого: ' + basket.countBasketPrice(getCachedStringifyItems(Lang.EN, Currency.USD)) + Currency.USD);
+console.log('Ассортимент:\n' + getCachedStringifyItems(Lang.FR, Currency.EUR).join("\n"));
+console.log('\nИтого: ' + basket.countBasketPrice(getCachedStringifyItems(Lang.FR, Currency.EUR)) + Currency.EUR);
+</script>
+<script>
+    /*3.* Подумать над глобальными сущностями. 
+    К примеру, сущность «Продукт» в интернет-магазине актуальна не только для корзины, но и для каталога. 
+    Стремиться нужно к тому, чтобы объект «Продукт» имел единую структуру для различных модулей сайта, 
+    но в разных местах давал возможность вызывать разные методы.
+    */
+
+    var catalog_flat = [
+    { id: '1', name: 'root' },
+    { id: '3', name: '3', parent_id: '1' },
+    { id: '4', name: '4', parent_id: '3' },
+    { id: '5', name: '5', parent_id: '3' },
+    { id: '6', name: '6', parent_id: '1' },
+    { id: '7', name: '7', parent_id: '6' },
+    { id: '8', name: '8', parent_id: '7' },
+//    { id: '9', name: '9', parent_id: null }, // if .parent_id == null || undefined then it's root
+//    { id: '10', name: '10', parent_id: '123' } // "пока" нет такого родителя... ошибка несвязанности
+];
+
+function flatClone2Hierarchy ( flat, root = null ) {
+    const roots = [], map = [], id = [];
+    flat.forEach( item => {
+        map.push( Object.assign( {parent_id: root, children: []}, item ) ); // копируем ! (не глубокое (1), не учитывает наследование (2))
+        id.push( item.id );
+    } );
+    let i = -1;
+    map.forEach( item => {
+        if ( root == item.parent_id || ( i = id.indexOf( item.parent_id ) ) === -1 ){
+            roots.push( item );
+        }else{
+            item.parent = map[i];
+            map[i].children.push( item );
+        }
+    } );
+    return roots;
+}
+
+function flat2Hierarchy ( flat ){
+    return flat.reduce((acc, curr, index, orig) => {
+        if (curr.parent_id) {
+            let parent = orig.find(item => { return item.id === curr.parent_id; });
+            (parent.children = parent.children || []).push(curr);
+        } else {
+            acc.push(curr);
+        }
+        return acc;
+    }, []);
+};
+
+//let catalog = flatClone2Hierarchy(catalog_flat)
+let catalog = flat2Hierarchy(catalog_flat)
+
+function passNode(node, path = "", hist = [], separator = '/'){
+    if (Array.isArray(node)){
+        node.forEach(root=>{passNode(root, path, hist, separator)});
+    }else{
+        let cur_path = `${path}${separator}${node.id}`;
+        hist.push(cur_path);
+        if (node.children)
+            node.children.forEach(child => passNode(child, cur_path, hist));    
+    }
+    return hist;
+}
+console.log(passNode(catalog).join('\n'))
+
+function walk(node, {hist = new Map(), path = "", separator = '/', max_level = 1000} = {}){
+    if (Array.isArray(node)){
+        node.forEach(root=>{walk(root, {hist, path, separator, max_level: --max_level})});
+    }else{
+        let cur_path = `${path}${separator}${node.id}`;
+        let children_ids = node.children ? node.children.reduce((acc, child)=>{acc.push(child.id); return acc;}, []) : [];
+        hist.set(cur_path, children_ids)
+        if (max_level > 0 && node.children)
+            node.children.forEach(child => walk(child, {hist, path: cur_path, separator, max_level: --max_level}));
+    }
+    return hist;
+}
+//console.log(walk(catalog, {max_level: 1}).forEach((v, k)=> console.log(`${k}: ${v}`)));
+console.log(walk(catalog).forEach((v, k)=> console.log(`${k}: ${v}`)));
+
+//titles.sort((s, t) => s.localeCompare(t))
+
+    </script>
+</body>
+</html>
