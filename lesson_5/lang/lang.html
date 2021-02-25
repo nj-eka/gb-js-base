@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="lang.css">
+    <link rel="stylesheet" href="marquee.css">
+    <style>
+        ru,
+        en,
+        .ru,
+        .en {
+            display: none;
+        }
+    </style>
+    <script src="lscache.js" defer></script>
+    <script src="lang.js" defer></script>
+    <!--script src="location.js" defer></script-->
+    <script src="cur.js" defer></script>
+</head>
+
+<body>
+    <header class="site-header">
+        <div class="container-free">
+            <h1 class="site-title">
+                <ru>Заголовок страницы</ru>
+                <en>Site title</en>
+            </h1>
+            <select id="sel-lang" class="change-lang">
+                <option value="ru">RU</option>
+                <option value="en">EN</option>
+            </select>
+            <select id="sel-cur" class="change-cur">
+                <option value="RUB">RUB</option>
+                <option value="USD">USD</option>
+            </select>
+        </div>
+    </header>
+    <div class="container">
+        <h1>ItGid.info - <span class="lng-unit">создаем многоязычный сайт</span></h1>
+        <h2 class="lng-product-title">ABC PCI-Ex GeGe GTX 1650 Phoenix</h2>
+    </div>
+    <div class="footer container">
+        <p>
+            <ru>Все цены на странице указанны в валюте </ru>
+            <en>All prices on the page are in </en><span id="cur-sm"></span>
+        </p>
+        <p>
+            <ru>Cегодня: </ru>
+            <en>Today is </en><b id="curr-dt"></b>
+        </p>
+        <p class="disp-none">
+            <ru>Текущий курс: </ru>
+            <en>Current exchange rate: </en>
+            <span id="cur-rate"></span>
+        </p>
+        <div class="marquee disp-none">
+            <div>
+                <ru>ЦБРФ курсы валют на </ru>
+                <en>CBR exchange rate on </en><b id="cbr-dt"></b>
+            </div>
+            <span id="info-line-currency"><ru>Привет, мир!</ru><en>Hello World!</en></span></div>
+        <!--div class="marquee disp-none"><span id="info-line-weather"><ru>Привет, мир!</ru><en>Hello World!</en></span></div-->
+    </div>
+</body>
+
+</html>
